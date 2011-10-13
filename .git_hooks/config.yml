@@ -1,0 +1,7 @@
+ruby:
+    - ./**/*.rb
+    - ./**/*.rake
+    - ./Gemfile
+    - ./Rakefile
+ignore:
+    - ./ignore_my_syntax.rb
