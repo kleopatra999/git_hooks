@@ -1,0 +1,22 @@
+#!/usr/bin/ruby
+
+headline   = /^.*\w+.*$\n/
+blank_line = /^\s*$\n/
+task_line  = /^.*(task|bug)\s?:?\s?\d+/i
+details    = /.*/m
+
+regexp = /#{headline}#{blank_line}?#{task_line}#{details}*/
+
+commit_example =<<COMMIT
+    Implemented something useful.
+    Task 121
+COMMIT
+
+
+unless File.read(ARGV.first) =~ regexp
+  puts "Invalid format of commit message."
+  puts "Did you specify headline and task number?"
+  puts "Example of good commit message:\n"
+  puts commit_example
+  exit 1
+end

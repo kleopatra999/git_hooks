@@ -16,7 +16,9 @@ cd $REPO_DIR && git init > /dev/null
 cp $GIT_HOOKS_DIR $REPO_DIR -R
 cd $REPO_DIR/.git_hooks && ./bin/setup > /dev/null
 
-
+# remove commit message hook
+# TODO: modify setup script to install only specified hooks
+rm $REPO_DIR/.git_hooks/commit-msg
 
 
 setUp(){
