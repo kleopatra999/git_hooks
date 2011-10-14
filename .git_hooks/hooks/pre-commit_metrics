@@ -1,0 +1,110 @@
+#!/usr/bin/env ruby
+
+
+require 'rubygems'
+require 'flay'
+
+require 'tmpdir'
+require 'fileutils'
+require 'stringio'
+
+class FlogStats
+  attr_reader :densities
+
+  def initialize(repo, files)
+    @repo, @files = repo, files
+    @densities = {}
+    @flogger = Flog.new
+    scan
+  end
+
+  def scan
+    @files.each do |file|
+      @densities[file] = density_for_file(file)
+    end
+  end
+
+  def density_for_file(file)
+    file_path = File.join(@repo, file)
+    lines = File.read(file_path).split("\n").reject{|l| l =~ /^\s*(#|$)/}.size
+    @flogger.reset
+    @flogger.flog(file_path)
+    scores = @flogger.total
+    scores / lines
+  end
+end
+
+
+class Metrics
+
+  attr_reader :messages
+
+  def initialize(repo)
+    @repo = repo
+    @messages = []
+  end
+  
+  # TODO: remove duplication(see pre-commit_docs hook)
+  def files
+    @files ||= %x(git diff --cached --name-only).split("\n")
+  end
+
+  def tmp_repo
+    @tmp_repo ||= File.join(Dir.tmpdir, 'metrics_git_hook')
+  end
+
+  def report
+    puts @messages.reject(&:empty?)
+  end
+
+  def run!
+    FileUtils.cp_r(@repo, tmp_repo)
+    system "cd #{tmp_repo} && git reset --hard HEAD > /dev/null"
+
+    run_flog
+    run_flay
+  ensure
+    FileUtils.rm_rf(tmp_repo)
+  end
+
+  def run_flog
+    require 'flog'
+
+    old_stats = FlogStats.new(tmp_repo, files)
+    new_stats = FlogStats.new(@repo, files)
+    
+    old_stats.densities.each do |file, old_density|
+      new_density = new_stats.densities[file]
+      if new_density > old_density
+        @messages << "#{file}: density of flog scores is more than it was before: %0.3f VS %0.3f" %
+                     [old_density, new_density]
+      end
+    end
+  rescue LoadError
+    puts "Flog is not installed. Please run `gem install flog`"
+  end
+
+  def run_flay
+    require 'flay'
+
+    flay = Flay.new
+    files = Flay.expand_dirs_to_files(@repo)
+    flay.process(*files)
+
+    # hack to get flay output
+    stdout = $stdout
+    flay_io = StringIO.new
+    $stdout = flay_io
+    flay.report
+    $stdout = stdout
+
+    @messages << flay_io.string.split("\n").reject{|l| l =~ /^Total score|^\s*$/}.join("\n")
+  rescue LoadError
+    puts "Flay is not installed. Please run `gem install flay`"
+  end
+end
+
+
+metrics = Metrics.new(Dir.pwd)
+metrics.run!
+metrics.report
