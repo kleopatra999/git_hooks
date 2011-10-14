@@ -1,0 +1,86 @@
+#!/usr/bin/ruby
+
+# The script compares documentation coverage of the last commit with new changes.
+# It considers only files added to new commit.
+# TODO: to get previous versions of file it copies whole repository and runs "git reset --hard HEAD"
+#       is there a way to do it in more efficient way?
+
+require 'tmpdir'
+require 'fileutils'
+
+class DocCov
+  GAUGES = :modules, :classes, :methods, :constants,  :coverage
+  
+  class Stats
+    attr_accessor *GAUGES
+    def initialize(yard_output)
+      yard_output.split("\n").each do |line|
+        case line
+        when /(Modules|Classes|Methods|Constants).*\(\s*(\d+) undocumented/
+          send "#{$1.downcase}=", $2.to_i
+        when /(.*)% documented/
+          @coverage = $1.to_f
+        end
+      end
+    end
+  end
+
+
+  attr_reader :messages
+
+  def initialize(repo_path)
+    @repo_path = repo_path
+    @messages = []
+  end
+
+  def compare!
+    FileUtils.cp_r(@repo_path, tmp_repo)
+    system "cd #{tmp_repo} && git reset --hard HEAD > /dev/null"
+
+    old_stats = repo_stats(tmp_repo)
+    new_stats = repo_stats(@repo_path)
+
+    GAUGES.each do |entity|
+      case entity
+        when :coverage
+          @messages << "You decline documentation coverage. #{new_stats.coverage}% against #{old_stats.coverage}%" if old_stats.coverage > new_stats.coverage
+        else
+          removed_docs = new_stats.send(entity) - old_stats.send(entity)
+          @messages << "You removed documentation for #{removed_docs} #{entity}" if removed_docs > 0
+      end
+    end
+  ensure
+    FileUtils.rm_rf(tmp_repo)
+  end
+
+  def repo_stats(repo_path = @repo_path)
+    output = %x(cd #{repo_path} && #{yard_command})
+    Stats.new(output)
+  end
+
+  # files to commit
+  def files
+    @files ||= %x(git diff --cached --name-only).split("\n")
+  end
+
+  # path to temporary repository which is used to get files of the last commit
+  def tmp_repo
+    @tmp_repo ||= File.join(Dir.tmpdir, 'doc_cov_git_hook')
+  end
+
+  def yard_command
+    "yard --query \"#{yard_query}\""
+  end
+
+  def yard_query 
+    file_list = files.map{|f| "'#{f}'"}.join(', ')
+    "[#{file_list}].include? object.file"
+  end
+end
+
+
+# run script!
+
+doc_cov = DocCov.new(Dir.pwd)
+doc_cov.compare!
+puts doc_cov.messages
