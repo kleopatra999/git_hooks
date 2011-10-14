@@ -14,7 +14,8 @@ cd $REPO_DIR && git init > /dev/null
 
 # install git_hooks_framework
 cp $GIT_HOOKS_DIR $REPO_DIR -R
-cd $REPO_DIR/.git_hooks && ./bin/setup > /dev/null
+cd $REPO_DIR/.git_hooks && \
+./bin/setup commit-msg > /dev/null
 
 
 modify_file(){
@@ -72,4 +73,4 @@ test_valid_commit_messages(){
 cd $TEST_DIR
 . ./shunit2
 
-rm $REPO_DIR -rf
+#rm $REPO_DIR -rf

@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+subhooks = %w(pre-commit_syntax pre-commit_docs)
+
+subhooks.each do |subhook|
+  hook_file = File.join(Dir.pwd, "./.git/hooks/#{subhook}")
+  if File.exists? hook_file
+    system hook_file 
+    exit 1 if $? != 0
+  end
+end
