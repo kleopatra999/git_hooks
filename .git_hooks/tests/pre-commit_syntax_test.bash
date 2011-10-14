@@ -61,5 +61,4 @@ test_commit_invalid_syntax_which_ignored(){
 cd $TEST_DIR
 . ./shunit2
 
-
 rm $REPO_DIR -rf
