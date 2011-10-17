@@ -18,7 +18,7 @@ oneTimeSetUp(){
 
     cd $REPO_DIR
     git add -A
-    git ci -m 'initial commit' &> /dev/null
+    git commit -m 'initial commit' &> /dev/null
 
     cd $TEST_DIR
 }

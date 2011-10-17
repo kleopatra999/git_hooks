@@ -18,7 +18,7 @@ test_invalid_commit_messages(){
     msgs[1]="Only headline"
     msgs[2]="Task 34; some message"
     msgs[3]="Task 34\nsome message"
-    msgs[4]="Somethin done task 14"
+    msgs[4]="Something done task 14"
 
     for((i = 0; i < 5; i++)); do
 	modify_file

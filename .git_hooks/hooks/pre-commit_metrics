@@ -26,6 +26,7 @@ class FlogStats
 
   def density_for_file(file)
     file_path = File.join(@repo, file)
+    return nil unless File.exists?(file_path)
     lines = File.read(file_path).split("\n").reject{|l| l =~ /^\s*(#|$)/}.size
     @flogger.reset
     @flogger.flog(file_path)
@@ -75,7 +76,7 @@ class Metrics
     
     old_stats.densities.each do |file, old_density|
       new_density = new_stats.densities[file]
-      if new_density > old_density
+      if old_density and new_density > old_density
         @messages << "#{file}: density of flog scores is more than it was before: %0.3f VS %0.3f" %
                      [old_density, new_density]
       end

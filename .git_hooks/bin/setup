@@ -28,7 +28,7 @@ tracked_hooks_dir=".git_hooks"
 tracked_hooks_path="../$tracked_hooks_dir"
 
 
-EXISTING_HOOKS="commit-msg pre-commit pre-commit_docs pre-commit_syntax"
+EXISTING_HOOKS="commit-msg pre-commit pre-commit_docs pre-commit_syntax pre-commit_metrics"
 
 
 if [ $# -gt 0 ]; then

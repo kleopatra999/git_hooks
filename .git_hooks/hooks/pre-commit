@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-subhooks = %w(pre-commit_syntax pre-commit_docs)
+subhooks = %w(pre-commit_syntax pre-commit_docs pre-commit_metrics)
 
 subhooks.each do |subhook|
   hook_file = File.join(Dir.pwd, "./.git/hooks/#{subhook}")
