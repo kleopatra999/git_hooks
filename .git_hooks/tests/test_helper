@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+TEST_DIR=$(cd ${0%/*} && pwd)
+GIT_HOOKS_DIR=$( cd $TEST_DIR/.. && pwd)
+REPO_DIR="/tmp/git_hooks_test"
+
+
+oneTimeSetUp(){
+    # create test git repo
+    rm $REPO_DIR -rf
+    mkdir -p $REPO_DIR
+    cd $REPO_DIR && git init > /dev/null
+
+    # install git_hooks_framework
+    cp $GIT_HOOKS_DIR $REPO_DIR -R
+    cd $REPO_DIR/.git_hooks
+    ./bin/setup $INSTALL_HOOKS > /dev/null
+
+    cd $REPO_DIR
+    git add -A
+    git ci -m 'initial commit' &> /dev/null
+
+    cd $TEST_DIR
+}
+
+oneTimeTearDown(){
+    rm $REPO_DIR -rf
+}
+
+setUp(){
+    cd $REPO_DIR
+}

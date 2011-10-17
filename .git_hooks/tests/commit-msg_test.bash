@@ -1,33 +1,15 @@
 #!/usr/bin/env bash
 
-TEST_DIR=$(cd ${0%/*} && pwd)
-GIT_HOOKS_DIR=$( cd $TEST_DIR/.. && pwd)
-REPO_DIR="/tmp/git_hooks_test"
+INSTALL_HOOKS="commit-msg"
+. test_helper
 
 valid_ruby_code="def meth(); end"
 invalid_ruby_code="def meth))(); end"
-
-# create test git repo
-rm $REPO_DIR -rf
-mkdir -p $REPO_DIR
-cd $REPO_DIR && git init > /dev/null
-
-# install git_hooks_framework
-cp $GIT_HOOKS_DIR $REPO_DIR -R
-cd $REPO_DIR/.git_hooks && \
-./bin/setup commit-msg > /dev/null
-
 
 modify_file(){
     echo "a char\n" >> ./file.txt
     git add ./file.txt
 }
-
-setUp(){
-    cd $REPO_DIR
-}
-
-
 
 test_invalid_commit_messages(){
     local msgs
@@ -68,9 +50,4 @@ test_valid_commit_messages(){
     done
 }
 
-
-# run tests using shunit
-cd $TEST_DIR
 . ./shunit2
-
-#rm $REPO_DIR -rf

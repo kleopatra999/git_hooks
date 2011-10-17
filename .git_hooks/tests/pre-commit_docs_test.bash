@@ -1,50 +1,22 @@
 #!/usr/bin/env bash
 
-TEST_DIR=$(cd ${0%/*} && pwd)
-GIT_HOOKS_DIR=$( cd $TEST_DIR/.. && pwd)
-REPO_DIR="/tmp/git_hooks_test"
-
-
-# create test git repo
-rm $REPO_DIR -rf
-mkdir -p $REPO_DIR
-cd $REPO_DIR && git init > /dev/null
-
-# install git_hooks_framework
-cp $GIT_HOOKS_DIR $REPO_DIR -R
-cd $REPO_DIR/.git_hooks && \
-./bin/setup pre-commit pre-commit_docs > /dev/null
-
-
-
+INSTALL_HOOKS="pre-commit pre-commit_docs"
+. test_helper
 
 documented_code="
   # class A description\n
   class A\n
     # method doc\n
-    def meth; end\n
-\n
+    def meth; end\n\n
     # method doc\n
     def meth2; end\n
-  end\n
-"
+  end\n "
 
 undocumented_code="
   class A\n
     def meth; end\n
     def meth2; end\n
-  end\n
-"
-
-
-cd $REPO_DIR
-git add -A
-git ci -m 'initial' &> /dev/null
-
-setUp(){
-    cd $REPO_DIR
-}
-
+  end\n "
 
 test_decline_documentation(){
     mkdir lib
@@ -60,9 +32,4 @@ test_decline_documentation(){
     assertTrue "echo '${output}' | grep 'You decline documentation'"
 }
 
-
-# run tests using shunit
-cd $TEST_DIR
 . ./shunit2
-
-rm $REPO_DIR -rf
