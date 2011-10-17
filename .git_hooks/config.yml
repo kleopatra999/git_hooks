@@ -1,7 +1,12 @@
-ruby:
-    - ./**/*.rb
-    - ./**/*.rake
-    - ./Gemfile
-    - ./Rakefile
-ignore:
-    - ./ignore_my_syntax.rb
+hooks:
+    pre-commit:
+        docs: true
+        syntax: true
+        flay: true
+        flog: true
+        reek: true
+    commit-msg: true
+syntax:
+    # regular expressions 
+    ruby: (\.rb|\.rake|Gemfile|Rakefile)$
+    ignore: ignore_my_syntax\.rb$

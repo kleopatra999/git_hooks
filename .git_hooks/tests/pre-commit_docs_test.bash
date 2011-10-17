@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-INSTALL_HOOKS="pre-commit pre-commit_docs"
+USE_HOOKS="docs"
 . test_helper
 
 documented_code="

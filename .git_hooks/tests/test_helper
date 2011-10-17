@@ -5,20 +5,33 @@ GIT_HOOKS_DIR=$( cd $TEST_DIR/.. && pwd)
 REPO_DIR="/tmp/git_hooks_test"
 
 
+configure_hooks(){
+    cd $REPO_DIR
+    sed -i -e 's/true/false/g' .git_hooks/config.yml
+    for hook in $USE_HOOKS; do
+        sed -i -e "s/${hook}: false/${hook}: true/g" .git_hooks/config.yml
+    done
+}
+
 oneTimeSetUp(){
     # create test git repo
     rm $REPO_DIR -rf
     mkdir -p $REPO_DIR
     cd $REPO_DIR && git init > /dev/null
 
+    touch 1
+    git add -A
+    git ci -m 'initial commit' > /dev/null
+
     # install git_hooks_framework
     cp $GIT_HOOKS_DIR $REPO_DIR -R
     cd $REPO_DIR/.git_hooks
-    ./bin/setup $INSTALL_HOOKS > /dev/null
+    ./bin/setup > /dev/null
 
+    configure_hooks
     cd $REPO_DIR
     git add -A
-    git commit -m 'initial commit' &> /dev/null
+    git commit -m 'installed git hooks' &> /dev/null
 
     cd $TEST_DIR
 }

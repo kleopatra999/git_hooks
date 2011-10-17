@@ -2,42 +2,12 @@
 
 # One-time setup (per repo) of .git_hooks as a tracked set of git hooks.
 
-validate_hooks(){
-    local found
-
-    for hook in $*; do
-        found=0
-        for existing in $EXISTING_HOOKS; do
-            if [ $existing = $hook ] ; then
-                found=1
-            fi
-        done
-        if [ $found -eq 0 ]; then
-            echo "Unknown hook '${hook}'"
-            exit 1
-        fi
-    done
-}
-
-
 dot_git_path="../.git"
 hooks_path="../.git/hooks"
 old_hooks_dir=".old_git_hooks"
 old_hooks_path="../$old_hooks_dir"
 tracked_hooks_dir=".git_hooks"
 tracked_hooks_path="../$tracked_hooks_dir"
-
-
-EXISTING_HOOKS="commit-msg pre-commit pre-commit_docs pre-commit_syntax pre-commit_metrics"
-
-
-if [ $# -gt 0 ]; then
-    hooks_to_install=$*
-else
-    hooks_to_install="$EXISTING_HOOKS"
-fi
-
-validate_hooks $hooks_to_install
 
 if [ ! -e $dot_git_path ] ; then
   echo "Can't find $dot_git_path/. "
@@ -52,17 +22,10 @@ else
     echo "$hooks_path is a directory." \
          "Replacing with a symlink to $tracked_hooks_path."
 
-    validate_hooks $hooks_to_install
-
     invocation_dir=`pwd`
     mv $hooks_path $old_hooks_path && \
     cd `dirname $hooks_path` && \
     ln -s $tracked_hooks_path hooks && \
-
-    cd $tracked_hooks_path
-    for hook in $hooks_to_install; do
-        ln -s ./hooks/$hook ./$hook
-    done
     cd $invocation_dir
 
     echo "Old $hooks_path moved to $old_hooks_path." \
@@ -74,3 +37,4 @@ else
 fi
 
 exit 0
+

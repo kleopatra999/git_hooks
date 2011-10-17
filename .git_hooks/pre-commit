@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+
+$LOAD_PATH.unshift File.expand_path('../../hooks/hooks', __FILE__)
+require 'yaml'
+require 'pre_commit_hook'
+
+config = YAML.load_file("./.git/hooks/config.yml")
+hook = PreCommitHook.new(Dir.pwd, config)
+hook.run!
+return 1 unless hook.success

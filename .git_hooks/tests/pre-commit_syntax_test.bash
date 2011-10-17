@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-INSTALL_HOOKS="pre-commit pre-commit_syntax"
+USE_HOOKS="syntax"
 . test_helper
 
 valid_ruby_code="def meth(); end"

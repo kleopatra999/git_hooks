@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-INSTALL_HOOKS="commit-msg"
+USE_HOOKS="commit-msg"
 . test_helper
 
 valid_ruby_code="def meth(); end"
@@ -26,8 +26,8 @@ test_invalid_commit_messages(){
 	# try to commit and verify error message
 	output=$(git commit -F /tmp/git_hook_test_commit_msg 2>&1 | head -n 1)
 	assertEquals "Invalid format of commit message." "$output"
-	# verify there is no new commits
-	assertEquals "0" "$(git log --oneline 2> /dev/null | wc -l)"
+        # verify there is no new commits (only initial commit)
+	assertEquals "1" "$(git log --oneline 2> /dev/null | wc -l)"
     done
 }
 
@@ -42,11 +42,11 @@ test_valid_commit_messages(){
     msgs[4]="Create something\nTask: 123123\ndetails"
 
     for((i = 0; i < 5; i++)); do
-	modify_file
-	echo -e ${msgs[$i]} > /tmp/git_hook_test_commit_msg
-	git commit -F /tmp/git_hook_test_commit_msg > /dev/null
-	# verify number of commits is incremented 
-	assertEquals "$[i+1]" "$(git log --oneline 2> /dev/null | wc -l)"
+        modify_file
+        echo -e ${msgs[$i]} > /tmp/git_hook_test_commit_msg
+        git commit -F /tmp/git_hook_test_commit_msg > /dev/null
+        # verify number of commits is incremented 
+        assertEquals "$[i+2]" "$(git log --oneline 2> /dev/null | wc -l)"
     done
 }
 
