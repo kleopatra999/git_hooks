@@ -4,3 +4,5 @@
 # Ignore local git hooks:
 /.git_hooks/local/*
 !/.git_hooks/local/README
+
+/.gitCOMMIT_EDITMSG
