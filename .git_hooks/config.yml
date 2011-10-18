@@ -5,6 +5,7 @@ hooks:
         flay: true
         flog: true
         reek: true
+        roodi: true
     commit-msg: true
 syntax:
     # regular expressions 
