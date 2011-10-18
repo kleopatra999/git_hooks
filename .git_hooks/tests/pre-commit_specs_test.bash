@@ -3,7 +3,7 @@
 USE_HOOKS="specs"
 . test_helper
 
-test_saikuro(){
+test_specs(){
    local spec_code="
      describe 'Math' do
        it 'one should be two' do

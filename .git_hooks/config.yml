@@ -8,6 +8,7 @@ hooks:
         roodi: true
         saikuro: true
         specs: true
+        tests: true
     commit-msg: true
 syntax:
     # regular expressions 

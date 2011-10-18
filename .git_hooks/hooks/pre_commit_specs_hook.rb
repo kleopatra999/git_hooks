@@ -10,7 +10,6 @@ class PreCommitSpecsHook < PreCommitBaseHook
   rescue LoadError
     messages << "Specs hook requires nokogiri. To install it run `gem install nokogiri`"
   ensure
-    #FileUtils.rm output_file
     true
   end
 

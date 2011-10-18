@@ -11,6 +11,7 @@ require 'pre_commit_reek_hook'
 require 'pre_commit_roodi_hook'
 require 'pre_commit_saikuro_hook'
 require 'pre_commit_specs_hook'
+require 'pre_commit_tests_hook'
 
 
 class PreCommitHook
