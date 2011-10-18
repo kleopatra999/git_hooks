@@ -7,4 +7,4 @@ require 'pre_commit_hook'
 config = YAML.load_file("./.git/hooks/config.yml")
 hook = PreCommitHook.new(Dir.pwd, config)
 hook.run!
-return 1 unless hook.success
+exit 1 unless hook.success

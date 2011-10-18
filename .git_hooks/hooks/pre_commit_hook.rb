@@ -9,6 +9,7 @@ require 'pre_commit_flay_hook'
 require 'pre_commit_flog_hook'
 require 'pre_commit_reek_hook'
 require 'pre_commit_roodi_hook'
+require 'pre_commit_saikuro_hook'
 
 
 class PreCommitHook
