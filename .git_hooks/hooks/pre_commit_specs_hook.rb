@@ -5,17 +5,13 @@ class PreCommitSpecsHook < PreCommitBaseHook
       return true
     end
     require 'nokogiri'
-    system rspec_command
-    parse_html
+    html = %x(#{rspec_command})
+    parse_html(html)
   rescue LoadError
     messages << "Specs hook requires nokogiri. To install it run `gem install nokogiri`"
   ensure
     #FileUtils.rm output_file
     true
-  end
-
-  def output_file
-    File.join(Dir.tmpdir, "git_hooks_rspec_output.html")
   end
 
   def rspec_installed?
@@ -28,11 +24,10 @@ class PreCommitSpecsHook < PreCommitBaseHook
 
   def rspec_command
     files = Dir['./spec/**/*_spec.rb'].join(" ")
-    "rspec --format=html #{files} > #{output_file}"
+    "rspec --format=html #{files}"
   end
 
-  def parse_html
-    html = File.read(output_file)
+  def parse_html(html)
     doc = Nokogiri::HTML(html)
     doc.css('div.rspec-report div.results div.example_group').each do |group|
       group_name = group.css('dt').first.text
