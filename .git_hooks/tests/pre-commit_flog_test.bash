@@ -12,7 +12,7 @@ test_flog_message(){
    echo "instance_eval{ instance_eval{ instance_eval{ puts 'Hi!' } } }" > ./hello_world.rb
    git add ./hello_world.rb
    warning=$(git commit -m 'second hello commit' 2>&1 1>/dev/null)
-   assertEquals "hello_world.rb: density of flog scores is more than it was before: 1.000 VS 18.103" "$warning"
+   assertEquals "Flog: hello_world.rb: density of flog scores is more than it was before: 1.000 VS 18.103" "$warning"
 }
 
 . ./shunit2

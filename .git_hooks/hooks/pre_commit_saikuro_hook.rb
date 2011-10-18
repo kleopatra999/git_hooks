@@ -32,6 +32,10 @@ class PreCommitSaikuroHook < PreCommitBaseHook
     File.join(output_dir, "index_cyclo.html")
   end
 
+  def format_message(msg)
+    "Saikuro #{msg}"
+  end
+
   def parse_html
     html = File.read(index_html)
     doc = Nokogiri::HTML(html)
@@ -43,7 +47,7 @@ class PreCommitSaikuroHook < PreCommitBaseHook
          method     = tds[1].text
          complexity = tds[2].text
          type       = tds[2]['class']
-         messages << "Saikuro #{type}: #{file}: #{klass}##{method} has complexity #{complexity}"
+         messages << "#{type}: #{file}: #{klass}##{method} has complexity #{complexity}"
       end
     end
   end

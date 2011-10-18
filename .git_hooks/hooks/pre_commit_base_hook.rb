@@ -21,4 +21,16 @@ class PreCommitBaseHook
   def changed_files
     @changed_files ||= %x(git diff --cached --name-only).split("\n")
   end
+
+  def formatted_messages
+    messages.map{|msg| format_message(msg)}
+  end
+  
+  def format_message(msg)
+    "#{name}: #{msg}"
+  end
+
+  def name
+    self.class.to_s.scan(/PreCommit(.*)Hook/).first
+  end
 end
